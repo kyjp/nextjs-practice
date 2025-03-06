@@ -1,1 +1,1 @@
-# Prisma 練習用
+# Next.js 練習用
