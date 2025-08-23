@@ -1,5 +1,6 @@
 "use client";
-import React, { use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { createUserAction } from "./create-user-action";
 
 const ClientComponent = () => {
   const [count, setCount] = useState(0);
@@ -13,11 +14,12 @@ const ClientComponent = () => {
     setData({ ...data, [name]: value });
   };
   const onSubmit = () => {
-    fetch("/users", { method: "POST", body: JSON.stringify(data) }).then((res) => {
-      res.json().then((data) => {
-        console.log(data);
-      });
-    });
+    createUserAction(data).then((res) => console.log(res));
+    // fetch("/users", { method: "POST", body: JSON.stringify(data) }).then((res) => {
+    //   res.json().then((data) => {
+    //     console.log(data);
+    //   });
+    // });
   };
   return (
     <>
