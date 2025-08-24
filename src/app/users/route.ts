@@ -1,6 +1,11 @@
 import z from "zod";
 import prisma from "../../../lib/prisma";
 
+type CreateUserResult = {
+  success: boolean;
+  message: string;
+};
+
 const createUserSchema = z.object({
   name: z.string().min(1).max(30),
   email: z.string().email().max(30),
