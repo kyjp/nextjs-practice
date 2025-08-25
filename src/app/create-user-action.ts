@@ -1,8 +1,8 @@
 "use server";
 
 import z from "zod";
-import prisma from "../../lib/prisma";
-import { actionClient } from "../../lib/safe-action";
+import prisma from "../lib/prisma";
+import { actionClient } from "../lib/safe-action";
 
 export type CreateUserResult = {
   success: boolean;

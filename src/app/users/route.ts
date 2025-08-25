@@ -1,5 +1,5 @@
 import z from "zod";
-import prisma from "../../../lib/prisma";
+import prisma from "../../lib/prisma";
 
 type CreateUserResult = {
   success: boolean;
@@ -11,6 +11,8 @@ const createUserSchema = z.object({
   email: z.string().email().max(30),
   password: z.string().min(8).max(100),
 });
+
+type CreateUserData = z.infer<typeof createUserSchema>;
 
 export async function POST(request: Request) {
   const res = await request.json();
