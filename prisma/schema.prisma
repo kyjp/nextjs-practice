@@ -9,12 +9,12 @@ generator client {
 }
 
 generator zod {
-  provider = "zod-prisma-types"
-  useMultipleFiles = true
-  writeBarrelFiles = false
-  createInputTypes = false
-  createOptionalDefaultValueTypes = true
-  createPartialTypes = true
+  provider                         = "zod-prisma-types"
+  useMultipleFiles                 = true // default is false
+  writeBarrelFiles                 = false // default is true
+  createInputTypes                 = false // default is true
+  createOptionalDefaultValuesTypes = true // default is false
+  createPartialTypes               = true // default is false
 }
 
 datasource db {
@@ -23,17 +23,55 @@ datasource db {
 }
 
 model User {
-  id    Int @id @default(autoincrement())
+  id        Int        @id @default(autoincrement())
   /// @zod.string.email().max(255)
-  email String @unique @db.VarChar(255)
-  /// @zod.string.min(1).max(30).regex(/[a-zA-Z]/, {message: "英字を含めてください"}).regex(/[0-9]/, {message: "数字を含めてください"})
-  name  String
+  email     String     @unique @db.VarChar(255)
+  /// @zod.string.min(1).max(30).regex(/[a-zA-Z]/, { message: "英字を含めてください" }).regex(/[0-9]/, { message: "数字を含めてください"  })
+  password  String
   /// @zod.string.min(1).max(30)
-  password String
-  image String? @map("image_url")
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
+  name      String     @db.VarChar(30)
+  imageUrl  String?    @map("image_url")
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+  products  Product[]
+  bookmarks Bookmark[]
 
   @@index([email])
   @@map("users")
+}
+
+model Product {
+  id          Int        @id @default(autoincrement())
+  /// @zod.string.min(1).max(100)
+  title       String     @db.VarChar(100)
+  /// @zod.string.min(1).max(4000)
+  description String     @db.VarChar(4000)
+  /// @zod.number.min(1)
+  price       Int
+  /// @zod.number.min(0)
+  stock       Int
+  imageUrl    String?    @map("image_url")
+  userId      Int        @map("user_id")
+  user        User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime   @default(now()) @map("created_at")
+  updatedAt   DateTime   @updatedAt @map("updated_at")
+  bookmarks   Bookmark[]
+
+  @@index([userId])
+  @@map("products")
+}
+
+model Bookmark {
+  id        Int      @id @default(autoincrement())
+  createdAt DateTime @default(now()) @map("created_at")
+  userId    Int      @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  productId Int      @map("product_id")
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([userId, productId])
+  @@index([userId])
+  @@index([productId])
+  @@map("bookmarks")
 }
